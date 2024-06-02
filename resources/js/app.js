@@ -1,10 +1,27 @@
-import './bootstrap';
+function viewContact(id) {
+    // Effectuez une requête AJAX pour récupérer les détails du contact du serveur
+    fetch(`/contacts/${id}`)
+        .then(response => response.json())
+        .then(data => {
+            // Remplissez les champs de la modale avec les données du contact
+            document.getElementById('firstName').value = data.prenom;
+            document.getElementById('lastName').value = data.nom;
+            document.getElementById('email').value = data.e_mail;
+            document.getElementById('company').value = data.organisation.nom;
+            // Continuez avec d'autres champs si nécessaire
+
+            // Affichez la modale de lecture
+            document.getElementById('viewContactModal').style.display = 'block';
+        })
+        .catch(error => console.error('Erreur lors de la récupération des détails du contact :', error));
+}
 
 let currentPage = 1;
 const rowsPerPage = 10;
 const originalRows = Array.from(document.querySelectorAll('#contactsTable tbody tr'));
 
-export function filterContacts() {
+
+function filterContacts() {
     const searchInput = document.getElementById('search').value.toLowerCase();
     if (searchInput === "") {
         renderTable(originalRows);
@@ -96,21 +113,38 @@ function nextPage() {
     }
 }
 
-// Functions for button actions
-function viewContact(id) {
-    // Implement view contact logic here
-    alert(`Viewing contact ${id}`);
-}
 
 function editContact(id) {
-    // Implement edit contact logic here
     alert(`Editing contact ${id}`);
 }
 
 function deleteContact(id) {
-    // Implement delete contact logic here
-    alert(`Deleting contact ${id}`);
+
+// Afficher la modale de confirmation de suppression
+    document.getElementById('deleteModal').style.display = 'block';
+
+    // Stocker l'ID du contact à supprimer dans une variable globale
+    window.contactIdToDelete = id;
 }
+
+function confirmDelete() {
+    // Récupérer l'ID du contact à supprimer
+    const id = window.contactIdToDelete;
+
+    // Implémenter la logique de suppression ici (envoi de la requête de suppression, etc.)
+
+    // Une fois la suppression terminée, masquer la modale
+    document.getElementById('deleteModal').style.display = 'none';
+}
+
+function cancelDelete() {
+    // Masquer la modale de confirmation de suppression
+    document.getElementById('deleteModal').style.display = 'none';
+
+    // Réinitialiser l'ID du contact à supprimer
+    window.contactIdToDelete = null;
+}
+
 
 // Helper function to capitalize the first letter
 function capitalizeFirstLetter(string) {
